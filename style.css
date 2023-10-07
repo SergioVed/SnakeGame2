@@ -2,7 +2,7 @@ body {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  width: 200px;
+  width: 250px;
   background-color: rgb(6, 57, 112);
 }
 
@@ -33,12 +33,20 @@ body {
   background-color: blue;
 }
 
+.snakeHead {
+  background-color: green;
+}
+
 .snake_head {
   background-color: greenyellow;
 }
 
 .apple {
   background-color: red;
+}
+
+.trap {
+  background-color: black;
 }
 
 #timer {
@@ -76,7 +84,6 @@ body {
 }
 
 .button {
-  margin-top: 50px;
   width: 150px;
   height: 150px;
   display: grid;

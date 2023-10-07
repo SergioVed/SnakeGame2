@@ -2,7 +2,7 @@ body{
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    width: 200px;
+    width: 250px;
     background-color: rgb(6,57,112);
 }
 .grid{
@@ -28,11 +28,17 @@ body{
 .snake{
     background-color: blue;
 }
+.snakeHead{
+    background-color: green;
+}
 .snake_head{
     background-color: greenyellow;
 }
 .apple{
     background-color: red;
+}
+.trap{
+    background-color: black;
 }
 #timer{
     height: 50px;
@@ -63,7 +69,7 @@ body{
     @include button(3, 2)
 }
 .button{
-    margin-top: 50px;
+    // margin-top: 50px;
     width: 150px;
     height: 150px;
     display: grid;

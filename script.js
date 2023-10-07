@@ -5,15 +5,13 @@ let scoreDisplay = document.querySelector(".scoreDisplay");
 let width = 10;
 let currentIndex = 0;
 let appleIndex = 0;
+let trapIndex = 0;
 let currentSnake = [2, 1, 0];
 let direction = 1;
 let score = 0;
 let speed = 0.8;
-let intervalTime = 0;
+let intervalTime = 500;
 let interval = 0;
-function clearBoard(){
-
-}
 document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("keyup", control);
     gameBoard();
@@ -22,9 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
 function startGame() {
     let squares = document.querySelectorAll(".grid div");
     randomApple(squares)
+    randomTrap(squares)
     direction = 1;
     scoreDisplay.innerHTML = "Score : " + score;
-    intervalTime = 1000;
+    intervalTime = 500;
     currentSnake = [2, 1, 0];
     currentIndex = 0;
     currentSnake.forEach((index) => squares[index].classList.add("snake"));
@@ -37,6 +36,25 @@ function gameBoard() {
         let div = document.createElement("div")
         grid.appendChild(div)
     }
+}
+function randomTrap(squares){
+  do {
+    trapIndex = Math.floor(Math.random() * squares.length)
+    squares[trapIndex].classList.add("trap")
+  } while (squares[trapIndex].classList.contains("snake") && squares[appleIndex].classList.contains("apple"));
+}
+function eatTrap(squares, tail){
+  if (squares[currentSnake[0]].classList.contains("trap")) {
+    squares[currentSnake[0]].classList.remove("trap")
+    currentSnake.pop()
+    squares[tail].classList.remove("snake")
+    score--
+    scoreDisplay.textContent = score;
+    clearInterval(interval)
+    intervalTime = 500
+    interval = setInterval(moveOutcome, intervalTime);
+    randomTrap(squares)
+  }
 }
 
 function randomApple(squares) {
@@ -54,15 +72,19 @@ function randomApple(squares) {
       score++;
       scoreDisplay.textContent = score;
       clearInterval(interval);
+      intervalTime = 500
       interval = setInterval(moveOutcome, intervalTime);
     }
   }
 function moveSnake(squares) {
     let tail = currentSnake.pop();
     squares[tail].classList.remove("snake")
-    currentSnake.unshift(currentSnake[0] + direction)
+    squares[currentSnake[0]].classList.remove("snake_head")
     squares[currentSnake[0]].classList.add("snake")
+    currentSnake.unshift(currentSnake[0] + direction)
+    squares[currentSnake[0]].classList.add("snake_head")
     eatApple(squares, tail);
+    eatTrap(squares, tail)
 }
 function moveOutcome() {
     let squares = document.querySelectorAll(".grid div");
@@ -70,7 +92,7 @@ function moveOutcome() {
         alert("you hit something");
         return clearInterval(interval);
     }    
-    else if(score === 3){
+    else if(score === 5){
       nextLevel();
     }
     else{
@@ -122,13 +144,13 @@ function checkForHits(squares) {
  timer = document.getElementById("timer")
  const start = new Date()
  start.setSeconds(start.getSeconds() + 60)
+
  function updateTimer(){
     const currentTime = new Date()
     const timeDiff = new Date(start - currentTime)
-    const minutes = timeDiff.getMinutes();
     const seconds = timeDiff.getSeconds()
     intervalTime = 1000;
-    timer.innerText = `${minutes.toString().padStart(2, "0")} : ${seconds.toString().padStart(2, "0")}`
+    timer.innerText = `${seconds.toString().padStart(2, "0")}`
     if (timeDiff<=0) {
         clearInterval(interval)
         retry()
@@ -137,21 +159,34 @@ function checkForHits(squares) {
  updateTimer()
  interval = setInterval(updateTimer, intervalTime)
 
+ function clearBoard() {
+  let squares = document.querySelectorAll(".grid div");
+  currentSnake.forEach(i => {
+    squares[i].classList.remove("snake");
+    squares[i].classList.remove("snake_head")
+  });
+  squares[appleIndex].classList.remove("apple");
+  appleIndex = -1;
+}
+
 function retry(){
-    let retry = confirm("u need to get 3 score. Try again")
+  let retry = confirm("u need to get 3 score. Try again")
     if (retry) {
+        clearBoard()
+        clearInterval(interval)
         startGame()
-        gameBoard()
+        score = 0
     }     
 }
 function nextLevel(){
   let nextLevel = confirm("U won, wanna go to the next level?")
   if (nextLevel) {
-    start.setSeconds(start.getSeconds() + 50)
+    clearBoard()
+    clearInterval(interval)
     startGame()
-    gameBoard()
     score = 0
   } else {
     alert("Okay maybe next time")
+    clearBoard()
   }
 }
